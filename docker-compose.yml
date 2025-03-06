@@ -6,7 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
-      MYSQL_DATABASE: platform
+      MYSQL_DATABASE: platform  
 
     ports:
       - "3306:3306"
@@ -81,7 +81,7 @@ services:
       - DB_HOST=mysql
       - DB_USER=root
       - DB_PASSWORD=root
-      - DB_NAME=clientstreaming
+      - DB_NAME=clientlient
     networks:
       - network
     ports:
