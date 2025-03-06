@@ -1,12 +1,11 @@
 #PORT & DATABASE ----->
-PORT=3200
-DB_DATABASE = 'clientstreaming'
+PORT = 4000
+DB_DATABASE = "platform"
 
 # #DB CREDENTIAL ----->
-DB_HOST = 'mysql'
+DB_HOST = 'localhost'
 DB_USER = 'root'
-DB_PASS = 'root'
-DB_PORT = '3306'
+DB_PASS = ''
 
 #DB CREDENTIAL ---LIVE--->
 # DB_HOST = 'lms-dev-mysql-db.c5wak60cmo3u.ca-central-1.rds.amazonaws.com'
@@ -28,11 +27,24 @@ HTTP_REQUEST_TECHLOG = 'http://localhost:3400/api/v1'
 #SECRET HTTP ----->
 HTTP_REQUEST_SECRET_KEY = ''
 
-#SQS LINKS -- COUNT (3) ----->
+#SQS LINKS -- COUNT (4) ----->
 SQS_CLIENTLIENT_URL = ''
 SQS_TECHLOG_URL = ''
 SQS_STREAMING_URL = ''
+SQS_ACTIVITY_URL = ''
 
 #SQS VERSION & REGION ----->
 SQS_API_VERSION = '2012-11-05'
 SQS_REGION = 'ca-central-1'
+
+#VIDEO ROUTE AUTH TOKEN & VIDEO_ROUTE
+VIDEO_ROUTE = 'weird-right?-we-donot-show-it'
+VIDEO_ROUTE_AUTH = 'weird-right?-we-donot-show-it'
+
+# REDIS SETUP
+REDIS_URL_INTERNAL = "127.0.0.1"
+REDIS_PORT = 6379
+
+# Send OTP Valid Email Password
+EMAIL = ''
+PASS = ''
