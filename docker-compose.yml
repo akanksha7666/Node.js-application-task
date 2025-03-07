@@ -6,8 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
-      MYSQL_DATABASE: platform  
-
+      MYSQL_DATABASE: platform
     ports:
       - "3306:3306"
     networks:
@@ -35,13 +34,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=platform
+    env_file:
+      - ./admin/.env  # Load environment variables from the .env file
     networks:
       - network
     ports:
@@ -55,13 +49,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=clientstreaming
+    env_file:
+      - ./client-steaming/.env  # Load environment variables
     networks:
       - network
     ports:
@@ -75,13 +64,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=clientlient
+    env_file:
+      - ./clientlient/.env  # Load environment variables
     networks:
       - network
     ports:
@@ -90,3 +74,5 @@ services:
 networks:
   network:
     driver: bridge
+
+
