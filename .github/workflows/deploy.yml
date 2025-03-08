@@ -49,6 +49,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             # Change to your project directory
+            mkdir -p /root/Node.js-application-task
             cd /root/Node.js-application-task || exit 1
 
             # Pull latest images
