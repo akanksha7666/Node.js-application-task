@@ -27,7 +27,7 @@ services:
       - network
 
   admin:
-    image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}  # Dynamically updated image
+    image: akanksha7666/admin:latest  # Dynamically updated image
     container_name: admin
     depends_on:
       mysql:
@@ -42,7 +42,7 @@ services:
       - "4000:4000"
 
   client-streaming:
-    image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}  # Dynamically updated image
+    image: akanksha7666/clienstreming:latest  # Dynamically updated image
     container_name: client-streaming
     depends_on:
       mysql:
@@ -57,7 +57,7 @@ services:
       - "3200:3200"
 
   clientlient:
-    image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}  # Dynamically updated image
+    image: akanksha7666/clientlient:latest # Dynamically updated image
     container_name: clientlient-service
     depends_on:
       mysql:
