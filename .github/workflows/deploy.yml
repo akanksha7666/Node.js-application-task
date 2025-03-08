@@ -27,9 +27,6 @@ jobs:
         run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Fix Docker permissions
         run: sudo chmod 666 /var/run/docker.sock
-      - name: Fix Docker permissions
-        run: sudo chmod 666 /var/run/docker.sock
-
       - name: Build and push Docker images
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
@@ -52,6 +49,11 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
+            echo "Testing SSH connection..."
+            uname -a  # Print system info
+            docker --version  # Check Docker installation
+            docker compose version  # Check docker-compose installation
+           
             # Change to your project directory
             mkdir -p /root/Node.js-application-task
             cd /root/Node.js-application-task || exit 1
