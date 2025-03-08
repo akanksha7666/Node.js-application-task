@@ -63,35 +63,3 @@ jobs:
             uname -a  # Print system info
             docker --version  # Check Docker installation
             docker compose version  # Check docker-compose installation
-                 
-            # Change to your project directory
-            mkdir -p /root/Node.js-application-task
-            cd /root/Node.js-application-task || exit 1
-
-            # Authenticate with Docker (if required)
-            set -e
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-            
-            # Pull latest images
-            docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
-            docker pull redis:latest
-            docker pull mysql:latest
-
-            # Stop and remove existing containers
-            docker compose down || true
-
-            # Clean up old Docker images
-            docker system prune -a -f
-
-            # Update docker-compose.yml with new image versions
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/admin:.*|image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}|' docker-compose.yml
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
-
-            # Start containers
-            docker compose up -d
-
-
-
