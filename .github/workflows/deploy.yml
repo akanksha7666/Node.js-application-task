@@ -12,12 +12,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Free up disk space
         run: |
           docker system prune -a -f
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/hostedtoolcache
           df -h
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -33,22 +35,23 @@ jobs:
         
       - name: Fix Docker permissions
         run: sudo chmod 666 /var/run/docker.sock
-        
-      - name: Build and push Docker images
+
+      - name: Install sshpass
+        run: sudo apt install sshpass -y
+
+      - name: SSH to server
+        run: sshpass -p 'f^GMeRzI82@s' ssh -o StrictHostKeyChecking=no root@192.241.150.5
+
+      - name: Git clone or checkout
+        run: git clone https://github.com/akanksha7666/Node.js-application-task.git || cd Node.js-application-task
+
+      - name: Checkout test branch
         run: |
-          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          SHA_TAG=${{ env.SHA_TAG }}
-          
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest ./client-steaming
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/clientlient:latest ./clientlient
+          cd Node.js-application-task
+          git checkout test
+          git pull origin test
 
-          docker push ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/admin:latest
-
-          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest
-
-          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest
-
+      - name: Docker compose up
+        run: |
+          cd Node.js-application-task
+          docker-compose up -d
