@@ -1,4 +1,4 @@
-ame: Deploy Dockerized App
+name: Deploy Dockerized App
 
 on:
   push:
