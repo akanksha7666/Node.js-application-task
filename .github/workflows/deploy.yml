@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: 🔍 Debug DockerHub Login
+      - name:  Debug DockerHub Login
         run: |
           echo "Username: ${{ secrets.DOCKERHUB_USERNAME }}"
           echo "Password is set: ${{ secrets.DOCKERHUB_PASSWORD != '' }}"
