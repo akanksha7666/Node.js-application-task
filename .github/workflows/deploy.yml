@@ -22,8 +22,47 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name:  Debug DockerHub Login
-        run: |
-          echo "Username: ${{ secrets.DOCKERHUB_USERNAME }}"
-          echo "Password is set: ${{ secrets.DOCKERHUB_PASSWORD != '' }}"
+      - name: Extract commit SHA for tagging
+        id: vars
+        run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
+      - name: Build and push Docker images
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest ./client-steaming
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/clientlient:latest ./clientlient
+
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin:latest
+
+          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest
+
+          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            # Change to your project directory
+            cd /root/Node.js-application-task
+
+            # Pull latest images
+            docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
+
+            # Stop and remove existing containers
+            docker compose down || true
+
+            # Update docker-compose.yml with new image versions
+            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/admin:.*|image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}|' docker-compose.yml
+            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
+            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
+
+            # Start containers
+            docker compose up -d
