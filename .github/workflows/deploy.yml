@@ -25,7 +25,8 @@ jobs:
       - name: Extract commit SHA for tagging
         id: vars
         run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
+      - name: Fix Docker permissions
+        run: sudo chmod 666 /var/run/docker.sock
       - name: Build and push Docker images
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
