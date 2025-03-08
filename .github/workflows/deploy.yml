@@ -42,9 +42,6 @@ jobs:
       - name: SSH to server
         run: sshpass -p 'f^GMeRzI82@s' ssh -o StrictHostKeyChecking=no root@192.241.150.5
 
-      - name: install docker and docker compose
-        run: sudo apt install docker.io docker-compose -y
-
       - name: Git clone or checkout
         run: git clone https://github.com/akanksha7666/Node.js-application-task.git || cd Node.js-application-task
 
