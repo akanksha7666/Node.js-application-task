@@ -42,7 +42,7 @@ services:
       - "4000:4000"
 
   client-streaming:
-    image: akanksha7666/clienstreming:latest  # Dynamically updated image
+    image: akanksha7666/client-streaming:latest  # Dynamically updated image
     container_name: client-streaming
     depends_on:
       mysql:
