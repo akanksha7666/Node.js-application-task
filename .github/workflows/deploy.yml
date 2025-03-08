@@ -31,8 +31,8 @@ jobs:
           DOCKER_USER=${{ secrets.DOCKERHUB_USERNAME }}
 
           docker build -t $DOCKER_USER/admin:${{ env.SHA_TAG }} -t $DOCKER_USER/admin:latest ./admin
-          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./clientsteaming
-          docker build -t $DOCKER_USER/client-client:${{ env.SHA_TAG }} -t $DOCKER_USER/client-client:latest ./client-client
+          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./client-steaming
+          docker build -t $DOCKER_USER/client-client:${{ env.SHA_TAG }} -t $DOCKER_USER/client-client:latest ./clientlient
 
           docker push $DOCKER_USER/admin:${{ env.SHA_TAG }}
           docker push $DOCKER_USER/admin:latest
@@ -40,8 +40,8 @@ jobs:
           docker push $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}
           docker push $DOCKER_USER/client-streaming:latest
 
-          docker push $DOCKER_USER/client-client:${{ env.SHA_TAG }}
-          docker push $DOCKER_USER/client-client:latest
+          docker push $DOCKER_USER/clientlient:${{ env.SHA_TAG }}
+          docker push $DOCKER_USER/clientlient:latest
 
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.7
@@ -68,7 +68,7 @@ jobs:
             # Pull latest images
             sudo docker pull $DOCKER_USER/admin:${{ env.SHA_TAG }}
             sudo docker pull $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}
-            sudo docker pull $DOCKER_USER/client-client:${{ env.SHA_TAG }}
+            sudo docker pull $DOCKER_USER/clientlient:${{ env.SHA_TAG }}
 
             # Stop and remove existing containers
             sudo docker compose down || true
@@ -76,7 +76,7 @@ jobs:
             # Update docker-compose.yml with new image versions
             sudo sed -i "s|image: $DOCKER_USER/admin:.*|image: $DOCKER_USER/admin:${{ env.SHA_TAG }}|" docker-compose.yml
             sudo sed -i "s|image: $DOCKER_USER/client-streaming:.*|image: $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}|" docker-compose.yml
-            sudo sed -i "s|image: $DOCKER_USER/client-client:.*|image: $DOCKER_USER/client-client:${{ env.SHA_TAG }}|" docker-compose.yml
+            sudo sed -i "s|image: $DOCKER_USER/clientlient:.*|image: $DOCKER_USER/client-client:${{ env.SHA_TAG }}|" docker-compose.yml
 
             # Restart the containers
             sudo docker compose up -d
