@@ -31,8 +31,8 @@ jobs:
           DOCKER_USER=${{ secrets.DOCKERHUB_USERNAME }}
 
           docker build -t $DOCKER_USER/admin:${{ env.SHA_TAG }} -t $DOCKER_USER/admin:latest ./admin
-          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./client-steaming
-          docker build -t $DOCKER_USER/clientlient:${{ env.SHA_TAG }} -t $DOCKER_USER/clientlient:latest ./clientlient
+          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./client-streaming
+          docker build -t $DOCKER_USER/client-client:${{ env.SHA_TAG }} -t $DOCKER_USER/client-client:latest ./client-client
 
           docker push $DOCKER_USER/admin:${{ env.SHA_TAG }}
           docker push $DOCKER_USER/admin:latest
@@ -40,8 +40,8 @@ jobs:
           docker push $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}
           docker push $DOCKER_USER/client-streaming:latest
 
-          docker push $DOCKER_USER/clientlient:${{ env.SHA_TAG }}
-          docker push $DOCKER_USER/clientlient:latest
+          docker push $DOCKER_USER/client-client:${{ env.SHA_TAG }}
+          docker push $DOCKER_USER/client-client:latest
 
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.7
@@ -52,22 +52,33 @@ jobs:
           script: |
             DOCKER_USER=${{ secrets.DOCKERHUB_USERNAME }}
 
-            # Change to your project directory
+            # Ensure Docker is installed
+            if ! command -v docker &> /dev/null
+            then
+                echo "Docker not found. Installing..."
+                sudo apt update
+                sudo apt install -y docker.io
+                sudo systemctl start docker
+                sudo systemctl enable docker
+            fi
+
+            # Change to project directory
             cd /root/Node.js-application-task
 
             # Pull latest images
-            docker pull $DOCKER_USER/admin:${{ env.SHA_TAG }}
-            docker pull $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}
-            docker pull $DOCKER_USER/clientlient:${{ env.SHA_TAG }}
+            sudo docker pull $DOCKER_USER/admin:${{ env.SHA_TAG }}
+            sudo docker pull $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}
+            sudo docker pull $DOCKER_USER/client-client:${{ env.SHA_TAG }}
 
             # Stop and remove existing containers
-            docker compose down || true
+            sudo docker compose down || true
 
             # Update docker-compose.yml with new image versions
-            sed -i "s|image: $DOCKER_USER/admin:.*|image: $DOCKER_USER/admin:${{ env.SHA_TAG }}|" docker-compose.yml
-            sed -i "s|image: $DOCKER_USER/client-streaming:.*|image: $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}|" docker-compose.yml
-            sed -i "s|image: $DOCKER_USER/clientlient:.*|image: $DOCKER_USER/clientlient:${{ env.SHA_TAG }}|" docker-compose.yml
+            sudo sed -i "s|image: $DOCKER_USER/admin:.*|image: $DOCKER_USER/admin:${{ env.SHA_TAG }}|" docker-compose.yml
+            sudo sed -i "s|image: $DOCKER_USER/client-streaming:.*|image: $DOCKER_USER/client-streaming:${{ env.SHA_TAG }}|" docker-compose.yml
+            sudo sed -i "s|image: $DOCKER_USER/client-client:.*|image: $DOCKER_USER/client-client:${{ env.SHA_TAG }}|" docker-compose.yml
 
-            # Start containers
-            docker compose up -d
+            # Restart the containers
+            sudo docker compose up -d
+
 
