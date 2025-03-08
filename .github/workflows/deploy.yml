@@ -48,8 +48,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            DOCKER_USER=${{ secrets.DOCKERHUB_USERNAME }}
-            
             # Change to your project directory
             cd /root/Node.js-application-task
 
