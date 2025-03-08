@@ -76,6 +76,8 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
+            docker pull redis:latest
+            docker pull mysql:latest
 
             # Stop and remove existing containers
             docker compose down || true
