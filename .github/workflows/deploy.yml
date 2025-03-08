@@ -43,5 +43,6 @@ jobs:
 
       - name: Docker compose up
         run: |
+          sudo apt install docker-compose -y
           docker-compose -v
           docker-compose up -d
