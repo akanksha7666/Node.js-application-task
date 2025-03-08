@@ -31,7 +31,7 @@ jobs:
           DOCKER_USER=${{ secrets.DOCKERHUB_USERNAME }}
 
           docker build -t $DOCKER_USER/admin:${{ env.SHA_TAG }} -t $DOCKER_USER/admin:latest ./admin
-          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./client-streaming
+          docker build -t $DOCKER_USER/client-streaming:${{ env.SHA_TAG }} -t $DOCKER_USER/client-streaming:latest ./clientsteaming
           docker build -t $DOCKER_USER/client-client:${{ env.SHA_TAG }} -t $DOCKER_USER/client-client:latest ./client-client
 
           docker push $DOCKER_USER/admin:${{ env.SHA_TAG }}
