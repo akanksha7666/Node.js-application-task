@@ -56,7 +56,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            echo "Testing SSH connection..."
+            echo "Connected to server..."
             uname -a  # Print system info
             docker --version  # Check Docker installation
             docker compose version  # Check docker-compose installation
@@ -68,6 +68,9 @@ jobs:
             # Set environment variables manually
             SHA_TAG="${{ env.SHA_TAG }}"
             DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
+
+            # Authenticate with Docker (if required)
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
             # Pull latest images
             docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
