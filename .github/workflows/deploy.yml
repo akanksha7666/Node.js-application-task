@@ -59,6 +59,10 @@ jobs:
             mkdir -p /root/Node.js-application-task
             cd /root/Node.js-application-task || exit 1
 
+             # Set environment variables manually
+            SHA_TAG="${{ env.SHA_TAG }}"
+            DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
+            
             # Pull latest images
             docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
