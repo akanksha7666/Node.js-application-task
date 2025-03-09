@@ -102,7 +102,7 @@ jobs:
               sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
               
               # Start services
-              docker-compose up -d
+              docker-compose up --build -d
               # Debug
               docker ps -a
               docker logs admin || true
