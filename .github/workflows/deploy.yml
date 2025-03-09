@@ -63,7 +63,7 @@ jobs:
          script: |
               echo "Connected to server..."
               uname -a  # Print system info
-              docker compose version  # Check docker-compose installation
+              
       - name: Check Docker Installation
         run: docker --version
       
