@@ -19,15 +19,14 @@ jobs:
           df -h
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3 
-        
+        uses: docker/setup-buildx-action@v3   
       - name: Install Docker Compose
         run: |
-          DOCKER_COMPOSE_VERSION=2.22.0
-          sudo curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          sudo mv docker-compose /usr/local/bin/
-          docker-compose version
+         DOCKER_COMPOSE_VERSION=2.22.0
+         curl -L "https://github.com/docker/compose/releases/download/v$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+         chmod +x /usr/local/bin/docker-compose
+         ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -38,9 +37,6 @@ jobs:
       - name: Extract commit SHA for tagging
         id: vars
         run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-        
-      - name: Install Docker Compose
-        run: sudo apt-get install -y docker-compose-plugin
         
       - name: Fix Docker permissions
         run: |
