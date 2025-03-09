@@ -62,12 +62,14 @@ jobs:
          password: ${{ secrets.SSH_PASSWORD }}
          script: |
               echo "Connected to server..."
+              uname -a  # Print system info
+              docker compose version  # Check docker-compose installation
       - name: Check Docker Installation
         run: docker --version
       
       - name: Verify Docker Login
         run: docker info | grep -i "username"
-
+   
    
 
 
