@@ -35,10 +35,12 @@ jobs:
 
       - name: Build and push Docker images
         run: |
+          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+          SHA_TAG=${{ env.SHA_TAG }}
+          
           docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
           docker build -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest ./client-steaming
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client:latest ./clientlient
-
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/clientlient:latest ./clientlient
           docker push ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/admin:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
@@ -46,33 +48,6 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            echo "Connected to server..."
-            docker --version
-            docker compose version
 
-            mkdir -p /root/Node.js-application-task
-            cd /root/Node.js-application-task || exit 1
-            
-
-            docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
-
-            docker compose down || true
-            docker system prune -a -f
-
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/admin:.*|image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}|' docker-compose.yml
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
-
-            docker compose up -d
-
-
+     
 
