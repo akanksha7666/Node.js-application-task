@@ -103,6 +103,7 @@ jobs:
               ip addr show
 
               # Start services
+              docker-compose down
               docker-compose up -d
               # Debug
               docker ps -a
