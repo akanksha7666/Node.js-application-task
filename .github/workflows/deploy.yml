@@ -30,9 +30,15 @@ jobs:
       - name: Extract commit SHA for tagging
         id: vars
         run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
+        
+      - name: Fix Docker permissions
+        run: |
+          sudo usermod -aG docker $USER
+          sudo systemctl restart docker
+          
       - name: Build and push Docker images
         run: |
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
