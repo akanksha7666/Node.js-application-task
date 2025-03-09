@@ -52,25 +52,20 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest  
           
       - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@master  # Use the latest stable version
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "Connected to server..."
-            uname -a
-            docker --version
-            docker compose version
+         host: ${{ secrets.SSH_HOST }}
+         username: ${{ secrets.SSH_USER }}
+         password: ${{ secrets.SSH_PASSWORD }}
+         script: |
+              echo "Connected to server..."
+              
 
-            cd /path/to/your/project  # Change this to your actual deployment directory
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
-            echo "Deployment completed successfully!"   
+
+
     
         
      
