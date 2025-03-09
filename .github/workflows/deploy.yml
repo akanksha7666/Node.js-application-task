@@ -91,7 +91,7 @@ jobs:
               docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
               
               # Stop and remove existing containers
-              docker compose down || true  
+              docker compose down --remove-orphans || true 
               
               # Clean up old Docker images
               docker system prune -a -f
@@ -101,8 +101,11 @@ jobs:
               sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
               sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
               
-
-
+              # Start services
+              docker-compose up -d
+              # Debug
+              docker ps -a
+              docker logs admin || true
    
    
 
