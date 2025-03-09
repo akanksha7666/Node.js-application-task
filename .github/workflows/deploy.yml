@@ -90,12 +90,6 @@ jobs:
               docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
               docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
               
-              # Stop and remove existing containers
-              docker compose down --remove-orphans || true 
-              
-              # Clean up old Docker images
-              docker system prune -a -f
-             
                # Update docker-compose.yml with new image versions
               sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/admin:.*|image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}|' docker-compose.yml
               sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
