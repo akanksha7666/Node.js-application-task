@@ -45,6 +45,8 @@ jobs:
           sudo usermod -aG docker $USER
           newgrp docker
           sudo systemctl restart docker
+           docker ps || (echo "Docker is not running! Starting Docker..." && sudo systemctl start docker)
+
       - name: Check Docker Installation
         run: docker --version
       
