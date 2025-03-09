@@ -91,7 +91,7 @@ jobs:
               docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
               
               # Stop and remove existing containers
-              docker compose down --remove-orphans || true 
+              docker compose down || true 
               
               # Clean up old Docker images
               docker system prune -a -f
