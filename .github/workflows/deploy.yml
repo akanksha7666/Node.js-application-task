@@ -83,15 +83,24 @@ jobs:
          script: |
               echo "Connected to server..."
               uname -a  # Print system info
-
-              # Install docker-compose if not installed
+              if ! command -v docker &> /dev/null; then
+              echo "Docker not found! Installing..."
+              sudo apt-get update
+              sudo apt-get install -y docker.io
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker $USER
+               fi
+              docker --version  # Verify installation
+              
+              # Install docker-compose if miss
               if ! command -v docker-compose &> /dev/null; then
               echo "Installing Docker Compose..."
               DOCKER_COMPOSE_VERSION=2.20.2
               sudo curl -L "https://github.com/docker/compose/releases/download/v$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
               fi
-              
+              docker-compose version  # Verify installation
               # Verify installation
               docker-compose version
                 
