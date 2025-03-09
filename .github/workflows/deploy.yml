@@ -69,6 +69,10 @@ jobs:
       
       - name: Verify Docker Login
         run: docker info | grep -i "username"
+        
+      - name: Check Docker Compose Version
+        run: docker-compose --version
+
    
    
 
