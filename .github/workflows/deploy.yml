@@ -84,6 +84,10 @@ jobs:
               # Change to your project directory
               git clone https://github.com/akanksha7666/Node.js-application-task.git || echo "already clone"
               cd Node.js-application-task || exit 1
+              git checkout test
+              git pull origin test
+              pwd
+              ls
               
               # Pull latest images 
               docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
