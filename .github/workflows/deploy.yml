@@ -8,16 +8,16 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Free up disk space
         run: |
           docker system prune -a -f
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/local/lib/android /opt/hostedtoolcache
           df -h
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -30,32 +30,21 @@ jobs:
       - name: Extract commit SHA for tagging
         id: vars
         run: echo "SHA_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-        
-      - name: Fix Docker permissions
-        run: sudo chmod 666 /var/run/docker.sock
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Fix Docker permissions
-        run: |
-          sudo usermod -aG docker $USER
-          sudo systemctl restart docker
-        
       - name: Build and push Docker images
         run: |
-          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          SHA_TAG=${{ env.SHA_TAG }}
-          
           docker build -t ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/admin:latest ./admin
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest ./client-steaming
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/clientlient:latest ./clientlient
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest ./client-streaming
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/client:${{ env.SHA_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/client:latest ./client
 
-          #docker push ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
-          #docker push ${{ secrets.DOCKER_USERNAME }}/admin:latest
-
-          #docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
-          #docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest
-
-          #docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
-          #docker push ${{ secrets.DOCKER_USERNAME }}/clientlient:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/client-streaming:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/client:${{ env.SHA_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/client:latest
 
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.7
@@ -65,35 +54,24 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo "Connected to server..."
-            uname -a  # Print system info
-            docker --version  # Check Docker installation
-            docker compose version  # Check docker-compose installation
-                 
-            # Change to your project directory
+            docker --version
+            docker compose version
+
             mkdir -p /root/Node.js-application-task
             cd /root/Node.js-application-task || exit 1
-
-            # Authenticate with Docker (if required)
-            set -e
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
-            # Pull latest images
-            #docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
-            #docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
-            #docker pull ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}
 
-            # Stop and remove existing containers
+            docker pull ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/client:${{ env.SHA_TAG }}
+
             docker compose down || true
-
-            # Clean up old Docker images
             docker system prune -a -f
 
-            # Update docker-compose.yml with new image versions
             sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/admin:.*|image: ${{ secrets.DOCKER_USERNAME }}/admin:${{ env.SHA_TAG }}|' docker-compose.yml
             sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:.*|image: ${{ secrets.DOCKER_USERNAME }}/client-streaming:${{ env.SHA_TAG }}|' docker-compose.yml
-            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:.*|image: ${{ secrets.DOCKER_USERNAME }}/clientlient:${{ env.SHA_TAG }}|' docker-compose.yml
+            sed -i 's|image: ${{ secrets.DOCKER_USERNAME }}/client:.*|image: ${{ secrets.DOCKER_USERNAME }}/client:${{ env.SHA_TAG }}|' docker-compose.yml
 
-            # Start containers
             docker compose up -d
 
 
