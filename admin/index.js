@@ -42,9 +42,12 @@ app.listen(PORT, () => {
 //! Route Tester
 const toDisplay = {
   PORT: PORT,
-  "API-For": "Admin-Side 2",
+  "API-For": "Admin-Side",
   "Working-Status": true,
 };
+
+await('','');
+
 app.get("/", (req, res) => {
   res.send(toDisplay);
 });
