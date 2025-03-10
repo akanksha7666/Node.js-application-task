@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express2");
 const app = express();
 const cors = require("cors");
 const route = require("./routes/route");
@@ -46,7 +46,6 @@ const toDisplay = {
   "Working-Status": true,
 };
 
-await('','');
 
 app.get("/", (req, res) => {
   res.send(toDisplay);
